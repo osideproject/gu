@@ -12,8 +12,8 @@ const loadTokenAsset = function() {
 
   fetch(`https://api.reservoir.tools/tokens/v7?tokens=${address}:${token_id}`)
     .then(response => response.json())
-    //.then(response => setMainAsset(response['tokens'][0].token.imageLarge))
-    .then(response => console.log(response))
+    .then(response => setMainAsset(response['tokens'][0].token.imageLarge))
+    //.then(response => console.log(response))
     .catch(err => console.error(err));
 
   $('#download_button').click(function() {
