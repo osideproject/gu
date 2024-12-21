@@ -40,8 +40,8 @@ a.navbar-brand:hover {
 }
 .layer {
   display: block;
-  width: 30vw;
-  height: 30vw;
+  width: 60vw;
+  height: 60vw;
   margin: auto;
 }
 .clear {
@@ -195,9 +195,6 @@ a.navbar-brand:hover {
   }
   .primary_button {
     font-size: 18px;
-  }
-  .layer {
-    width: 95vw;
   }
   .clear {
     display: block;
