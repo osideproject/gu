@@ -2,19 +2,22 @@ const t = Date.now();
 let loaded, asset = false;
 
 $(function() {
-  $('#token_id').keyup(loadTokenAsset);
+  $('#find_button').click(loadTokenAsset);
 });
 
 const loadTokenAsset = function() {
+  $('.error').hide();
   const options = { method: 'GET', headers: { accept: '*/*', xApiKey: 'eee8eadf-046b-5f38-ba21-145d40ca278e' } };
-  const address = '0x39509d8e1dd96cc8bad301ea65c75c7deb52374c';
-  const token_id = $(this).val();
-
-  fetch(`https://api.reservoir.tools/tokens/v7?tokens=${address}:${token_id}`)
+  var address = $('#version').val();
+  var token_id = $('#token_id').val();
+  console.log(token_id)
+  url = `https://api.reservoir.tools/tokens/v7?tokens=${address}:${token_id}`;
+  console.log(url);
+  fetch(url)
     .then(response => response.json())
+    //.then(response => setMainAsset(response['tokens'][0].token.imageLarge))
     .then(response => setMainAsset(response['tokens'][0].token.imageLarge))
-    //.then(response => console.log(response))
-    .catch(err => console.error(err));
+    .catch(err => raiseError(err));
 
   $('#download_button').click(function() {
     if (loaded) {
@@ -25,10 +28,20 @@ const loadTokenAsset = function() {
 }
 
 const setMainAsset = function(url) {
+  console.log(url);
   asset = url.replace('width=250', 'width=2400');
   console.log(url)
   loadImage();
   loaded = true;
+  $('.pfp').show();
+}
+
+const raiseError = function(err) {
+  console.log(err);
+  $('.error').show();
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext("2d");
+  ctx.reset();
 }
 
 const loadImage = async function() {
@@ -36,14 +49,27 @@ const loadImage = async function() {
   const dataURL = canvas.toDataURL('image/png');
   const pfp = document.getElementById('pfp');
   const ctx = pfp.getContext('2d');
-  pfp.width = 1000;
-  pfp.height = 1000;
+  pfp.width = 500;
+  pfp.height = 500;
   img = newImage(dataURL);
   await preload(dataURL)
   .then(function() {
     ctx.drawImage(
       img, 0, 0, 1000, 1000
     );
+  });
+}
+
+const preload = function(src) {
+  return new Promise(function(resolve, reject) {
+    const img = new Image();
+    img.onload = function() {
+      resolve(src);
+    }
+    img.onerror = function() {
+      console.error('Failed to load image: ' + src);
+    }
+    img.src = src;
   });
 }
 
@@ -64,63 +90,12 @@ const generatePfpImage = async function() {
   }))).then(() => {
     images.forEach(img => {
       ctx.drawImage(
-        img, 0, 0, 1000, 1000
+        img, 0, 0, 500, 500
       );
     });
     return canvas;
   }).catch(error => {
     console.error(error);
-  });
-}
-
-const loadBannerImage = function() {
-  main_asset = newImage(asset);
-  main_asset.crossOrigin="anonymous";
-  const canvas = document.getElementById('banner_preview');
-  const ctx = canvas.getContext('2d');
-  canvas.width = 1500;
-  canvas.height = 500;
-  ctx.imageSmoothingEnabled = false;
-  preload(asset)
-  .then(function() {
-    ctx.drawImage(
-      main_asset, 0, 0
-    );
-    var p = ctx.getImageData(0, 0, 1, 1).data;
-    var hex = "#" + ("000000" + rgbToHex(p[0], p[1], p[2])).slice(-6);
-    ctx.fillStyle = hex;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.drawImage(
-      main_asset, 1000, -200, 1000, 1000
-    );
-    ctx.drawImage(
-      main_asset, 650, 100, 500, 500
-    );
-    ctx.drawImage(
-      main_asset, 450, 300, 250, 250
-    );
-    logo_url = './assets/301.png';
-    logo = newImage(logo_url);
-    preload(logo_url)
-    .then(function() {
-      ctx.drawImage(
-        logo, 0, 0, 1500, 1500
-      );
-    });
-  })
-}
-
-const preload = function(src) {
-  return new Promise(function(resolve, reject) {
-    const img = new Image();
-    img.onload = function() {
-      resolve(src);
-    }
-    img.onerror = function() {
-      console.error('Failed to load image: ' + src);
-    }
-    img.src = src;
   });
 }
 
@@ -146,7 +121,6 @@ const downloadCanvas = function(canvas) {
 }
 
 const editImage = async function(imageFile, prompt) {
-    const apiKey = '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'; // actual API key
     const apiUrl = 'https://api.openai.com/v1/images';
     try {
         const response = await fetch(apiUrl, {

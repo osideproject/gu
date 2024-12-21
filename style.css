@@ -49,7 +49,7 @@ a.navbar-brand:hover {
   width: 30vw;
   height: 30vw;
 }
-#download_button {
+#download_button, #find_button {
   width: 30vw;
   display: block;
 }
@@ -61,7 +61,11 @@ a.navbar-brand:hover {
   margin: auto;
 }
 .pfp {
-  display: block;
+  display: none;
+}
+.error {
+  display: none;
+  color: red;
 }
 #load_asset {
   width: 30%;
@@ -206,7 +210,7 @@ a.navbar-brand:hover {
     font-size: 24px;
     text-align: left;
   }
-  .layers #download_button {
+  #download_button, #find_button {
     width: 95vw;
   }
 }
