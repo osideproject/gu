@@ -79,7 +79,8 @@ const generatePfpImage = async function() {
 
   var images = [newImage(asset)];
 
-  images.push(newImage('./images/guxmas.png'));
+  images.push(newImage('./images/shotgunxmas.png?t='+t));
+  images.push(newImage('./images/gm1.png?t='+t));
 
   canvas.width = 1000;
   canvas.height = 1000;
